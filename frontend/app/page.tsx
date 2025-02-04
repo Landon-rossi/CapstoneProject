@@ -1,101 +1,89 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      <div className="min-h-screen bg-gradient-to-b from-black via-indigo-900 to-yellow-600 text-white font-sans">
+        {/* Hero Section */}
+        <header className="flex flex-col items-center justify-center text-center py-16 gap-8">
+          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
+            AI-Powered <span className="text-yellow-400">Solar Wind Classification</span>
+          </h1>
+          <p className="text-lg sm:text-xl max-w-2xl">
+            Leveraging artificial intelligence to predict and classify solar wind events with precision. Empowering space weather research and future technologies.
+          </p>
+          <div className="flex gap-4">
+            <Link
+                href="/learn-more"
+                className="rounded-full px-6 py-3 bg-yellow-500 text-black text-sm sm:text-base shadow-lg hover:shadow-yellow-500/50 hover:bg-yellow-400 transition"
+            >
+              Learn More
+            </Link>
+            <a
+                href="/model"
+                className="rounded-full px-6 py-3 border border-yellow-400 text-yellow-400 text-sm sm:text-base hover:bg-yellow-400 hover:text-black transition"
+            >
+              Try the Model
+            </a>
+          </div>
+        </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+        {/* Information Section */}
+        <main className="px-8 py-16 sm:px-20 sm:py-24 bg-black/70">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+            How Our AI Model Works
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
+              <h3 className="text-xl font-semibold text-yellow-400 mb-4">Data Collection</h3>
+              <p>
+                We analyze vast datasets from satellites and observatories, transforming raw solar wind data into meaningful insights.
+              </p>
+            </div>
+            <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
+              <h3 className="text-xl font-semibold text-yellow-400 mb-4">AI-Powered Predictions</h3>
+              <p>
+                Using machine learning, we classify solar winds by speed, density, and magnetic properties to predict potential impacts.
+              </p>
+            </div>
+            <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
+              <h3 className="text-xl font-semibold text-yellow-400 mb-4">Space Weather Applications</h3>
+              <p>
+                Our model supports research, satellite operations, and understanding the effects of space weather on Earth.
+              </p>
+            </div>
+          </div>
+        </main>
+
+        {/* Call to Action */}
+        <section id="get-started" className="text-center py-16 px-8 bg-yellow-500 text-black">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Collaborate with Us</h2>
+          <p className="text-lg mb-8">
+            Join our mission to advance space weather research and AI technology. Share your expertise, datasets, or ideas to improve our model.
+          </p>
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+              href="#"
+              className="inline-block rounded-full px-8 py-4 bg-black text-yellow-500 font-semibold text-sm sm:text-base hover:bg-yellow-400 hover:text-black transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+            Contact Us
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-black py-8 text-center text-sm">
+          <div className="flex justify-center gap-6 mb-4">
+            <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">
+              <Image src="/solar-icon.svg" alt="Solar Icon" width={24} height={24} />
+            </a>
+            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">
+              <Image src="/ai-icon.svg" alt="AI Icon" width={24} height={24} />
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              <Image src="/github-icon.svg" alt="GitHub Icon" width={24} height={24} />
+            </a>
+          </div>
+          <p>&copy; 2025 Solar Wind AI. All rights reserved.</p>
+        </footer>
+      </div>
   );
 }
