@@ -1,38 +1,70 @@
-import Link from "next/link";
+'use client';
 
-export default function LearnMore() {
+import { useState } from 'react';
+import Link from 'next/link';
+import type { NextPage } from 'next';
+
+const ModelPage: NextPage = () => {
+    const [modelOutput, setModelOutput] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const handleRunModel = async () => {
+        // Clear any old output and set loading state
+        setModelOutput('');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('/api/runModel');
+            const data = await response.json();
+
+            if (data.error) {
+                setModelOutput(`Error: ${data.error}`);
+            } else {
+                setModelOutput(data.output);
+            }
+        } catch (error: any) {
+            console.error(`Error fetching model output: ${error.message}`);
+            setModelOutput(`Error fetching model output: ${error.message}`);
+        } finally {
+            // End loading state
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-black to-yellow-600 text-white p-8">
             <header className="text-center py-16">
                 <h1 className="text-4xl sm:text-5xl font-bold text-yellow-400">
-                    Learn More About Solar Wind AI
+                    Run Your Python Model
                 </h1>
                 <p className="mt-4 text-lg sm:text-xl max-w-3xl mx-auto">
-                    Discover how our AI technology is advancing space weather research, enabling precision in solar wind classification, and transforming space exploration.
+                    Click the button below to execute the Python script and see its output.
                 </p>
             </header>
 
-            <main className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-12">
-                <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
-                    <h3 className="text-xl font-semibold text-yellow-400 mb-4">Why Solar Winds Matter</h3>
-                    <p>
-                        Solar winds impact satellites, power grids, and communication systems. Learn how we analyze these powerful forces from the sun.
-                    </p>
+            <main className="px-4 sm:px-12">
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={handleRunModel}
+                        // Disable the button if loading
+                        disabled={isLoading}
+                        // Apply different styles if loading
+                        className={`rounded-full px-6 py-3 font-bold transition ${
+                            isLoading
+                                ? 'bg-gray-400 text-gray-800 cursor-not-allowed'
+                                : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                        }`}
+                    >
+                        {isLoading ? 'Loading...' : 'Run Model'}
+                    </button>
                 </div>
 
-                <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
-                    <h3 className="text-xl font-semibold text-yellow-400 mb-4">AI in Space Weather</h3>
-                    <p>
-                        Artificial intelligence revolutionizes space weather predictions by analyzing complex datasets with unmatched speed and accuracy.
-                    </p>
-                </div>
-
-                <div className="p-6 bg-white/10 rounded-lg shadow-lg hover:shadow-yellow-500/30 transition">
-                    <h3 className="text-xl font-semibold text-yellow-400 mb-4">Our Mission</h3>
-                    <p>
-                        Collaborate with scientists, engineers, and organizations to advance solar wind research and promote sustainable space exploration.
-                    </p>
-                </div>
+                {modelOutput && (
+                    <div className="mt-8 bg-white/10 p-4 rounded-md">
+                        <h2 className="text-yellow-400 font-semibold mb-2">Model Output:</h2>
+                        <pre className="whitespace-pre-wrap">{modelOutput}</pre>
+                    </div>
+                )}
             </main>
 
             <footer className="text-center mt-16">
@@ -45,4 +77,6 @@ export default function LearnMore() {
             </footer>
         </div>
     );
-}
+};
+
+export default ModelPage;
