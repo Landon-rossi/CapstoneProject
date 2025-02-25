@@ -125,12 +125,29 @@ const SolarWindGame = () => {
             ref={gameAreaRef}
             className="relative w-screen h-screen bg-black overflow-hidden"
         >
-            {/* Add a large sun icon at the top */}
-            <img
-                src="/sun-icon.png"
-                alt="Sun"
-                className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-32"
-            />
+            <div
+                style={{
+                    width: '100%', // Full-width container
+                    height: '300px', // Adjust height as needed to control how much is shown
+                    overflow: 'hidden', // Crop the image
+                    position: 'absolute', // Position at the top
+                    top: '0', // Align to the top
+                    left: '0', // Center horizontally
+                }}
+            >
+                {/* Sun image displaying the bottom quarter */}
+                <img
+                    src="/sun-icon.png"
+                    alt="Sun"
+                    style={{
+                        width: '100%', // Stretch the image across the container
+                        height: 'auto', // Maintain aspect ratio
+                        position: 'absolute', // Needed for positioning
+                        bottom: '0', // Align the bottom of the image with the bottom of the container
+                    }}
+                />
+            </div>
+
 
             {/* Display game over screen if the game is over */}
             {isGameOver ? (

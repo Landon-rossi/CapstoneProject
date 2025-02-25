@@ -41,6 +41,4 @@ python -m pip install --upgrade pip setuptools wheel
 echo Installing requirements...
 python -m pip install -r requirements.txt
 
-:: 5. Run python script
-echo Running test_python.py...
-python test_python.py
+echo Install complete.

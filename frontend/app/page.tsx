@@ -62,7 +62,7 @@ export default function Home() {
             Join our mission to advance space weather research and AI technology. Share your expertise, datasets, or ideas to improve our model.
           </p>
           <a
-              href="#"
+              href="/contact"
               className="inline-block rounded-full px-8 py-4 bg-black text-yellow-500 font-semibold text-sm sm:text-base hover:bg-yellow-400 hover:text-black transition"
           >
             Contact Us
