@@ -1,5 +1,5 @@
 import './globals.css';
-import './contact/contact.module.css';
+//import './contact/contact.module.css';
 import { ReactNode } from 'react';
 import Link from "next/link";
 
