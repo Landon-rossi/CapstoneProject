@@ -55,7 +55,7 @@ export default function LearnMore() {
 
             <footer className="text-center mt-16">
                 <Link
-                    href="/"
+                    href="/frontend/public"
                     className="rounded-full px-6 py-3 bg-yellow-500 text-black font-bold hover:bg-yellow-400 transition"
                 >
                     Back to Home

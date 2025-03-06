@@ -7,26 +7,24 @@ import type { NextPage } from 'next';
 const ModelPage: NextPage = () => {
     const [modelOutput, setModelOutput] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [selectedModel, setSelectedModel] = useState<string>('modelA');
 
     const handleRunModel = async () => {
-        // Clear any old output and set loading state
         setModelOutput('');
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/runModel');
+            const response = await fetch(`/api/runModel?model=${selectedModel}`);
             const data = await response.json();
-
             if (data.error) {
                 setModelOutput(`Error: ${data.error}`);
             } else {
                 setModelOutput(data.output);
             }
         } catch (error: any) {
-            console.error(`Error fetching model output: ${error.message}`);
-            setModelOutput(`Error fetching model output: ${error.message}`);
+            console.error(`Error: ${error.message}`);
+            setModelOutput(`Error: ${error.message}`);
         } finally {
-            // End loading state
             setIsLoading(false);
         }
     };
@@ -35,20 +33,23 @@ const ModelPage: NextPage = () => {
         <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-black to-yellow-600 text-white p-8">
             <header className="text-center py-16">
                 <h1 className="text-4xl sm:text-5xl font-bold text-yellow-400">
-                    Run Your Python Model
+                    Select and Run a Model
                 </h1>
-                <p className="mt-4 text-lg sm:text-xl max-w-3xl mx-auto">
-                    Click the button below to execute the Python script and see its output.
-                </p>
             </header>
-
             <main className="px-4 sm:px-12">
-                <div className="flex justify-center mt-8">
+                <div className="flex justify-center space-x-4">
+                    <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="rounded-full px-4 py-2 text-black"
+                    >
+                        <option value="modelA">Model A</option>
+                        <option value="modelB">Model B</option>
+                        {/* Add more models as needed */}
+                    </select>
                     <button
                         onClick={handleRunModel}
-                        // Disable the button if loading
                         disabled={isLoading}
-                        // Apply different styles if loading
                         className={`rounded-full px-6 py-3 font-bold transition ${
                             isLoading
                                 ? 'bg-gray-400 text-gray-800 cursor-not-allowed'

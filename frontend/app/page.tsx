@@ -20,7 +20,7 @@ export default function Home() {
               Learn More
             </Link>
             <a
-                href="/model"
+                href="/try-model"
                 className="rounded-full px-6 py-3 border border-yellow-400 text-yellow-400 text-sm sm:text-base hover:bg-yellow-400 hover:text-black transition"
             >
               Try the Model

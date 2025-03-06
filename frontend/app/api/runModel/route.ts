@@ -2,12 +2,21 @@ import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import path from 'path';
 
-export async function GET() {
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const model = searchParams.get('model') || 'modelA';
+
     return new Promise((resolve) => {
-        // Absolute path to the Python in your venv
+        // Build the absolute path to the selected model's directory.
+        const modelDir = path.join(process.cwd(), 'models', model);
+
+        // Option 1: Using a common virtual environment.
         const pythonPath = path.join(process.cwd(), 'env', 'bin', 'python');
-        // Absolute path to the test script
-        const scriptPath = path.join(process.cwd(), 'test_python.py');
+
+        // Option 2: Use a separate venv for each model (if needed).
+        // const pythonPath = path.join(modelDir, 'venv', 'bin', 'python');
+
+        const scriptPath = path.join(modelDir, 'run_model.py');
 
         exec(`${pythonPath} ${scriptPath}`, (error, stdout, stderr) => {
             if (error) {

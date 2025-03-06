@@ -41,5 +41,5 @@ echo "Installing requirements..."
 pip install -r requirements.txt
 
 # 6. Run your Python script.
-echo "Running test_python.py..."
-python test_python.py
+# echo "Running test_python.py..."
+# python test_python.py
