@@ -9,6 +9,7 @@ const ModelPage = () => {
     const [modelImages, setModelImages] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isInstalling, setIsInstalling] = useState<boolean>(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
     useEffect(() => {
         const fetchModels = async () => {
@@ -71,7 +72,16 @@ const ModelPage = () => {
             console.error(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
+            setCurrentImageIndex(0);  // Reset image index when running model
         }
+    };
+
+    const nextImage = () => {
+        setCurrentImageIndex((prev) => (prev + 1) % modelImages.length);
+    };
+
+    const previousImage = () => {
+        setCurrentImageIndex((prev) => (prev - 1 + modelImages.length) % modelImages.length);
     };
 
     return (
@@ -116,10 +126,33 @@ const ModelPage = () => {
                 </div>
 
                 {modelImages.length > 0 && (
-                    <div className="mt-8 grid grid-cols-2 gap-4">
-                        {modelImages.map((img, index) => (
-                            <img key={index} src={img} alt={`Model Output ${index}`} className="rounded-lg shadow-lg w-full h-auto" />
-                        ))}
+                    <div className="mt-8 flex flex-col items-center">
+                        <div className="relative w-full max-w-3xl">
+                            <img 
+                                src={modelImages[currentImageIndex]} 
+                                alt={`Model Output ${currentImageIndex}`} 
+                                className="rounded-lg shadow-lg w-full h-auto"
+                            />
+                            {modelImages.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={previousImage}
+                                        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-l hover:bg-opacity-75"
+                                    >
+                                        ←
+                                    </button>
+                                    <button
+                                        onClick={nextImage}
+                                        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-r hover:bg-opacity-75"
+                                    >
+                                        →
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                        <div className="mt-4 text-center">
+                            Image {currentImageIndex + 1} of {modelImages.length}
+                        </div>
                     </div>
                 )}
             </main>

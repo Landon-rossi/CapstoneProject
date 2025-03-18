@@ -2,6 +2,8 @@ import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import pandas as pd
+import numpy as np
 
 # Define output directory to correctly point to the public/graphs folder
 output_dir = os.path.join(os.getcwd(), "public", "graphs")
@@ -16,6 +18,7 @@ def save_plot(filename):
 
 # Modified function to save PCA scatter plot
 def plot_pca_scatter(pca_df, binary_labels, outliers):
+    plt.figure()  # Start a new figure
     plt.scatter(pca_df['PC1'], pca_df['PC2'], c=binary_labels, cmap='coolwarm', s=60, alpha=0.6)
     plt.scatter(outliers['PC1'], outliers['PC2'], color='orange', edgecolor='black', s=100, label='Outlier', marker='X')
     plt.title('PCA of Drug Sensitivity Data')
@@ -26,6 +29,7 @@ def plot_pca_scatter(pca_df, binary_labels, outliers):
 
 # Modified function to save DBSCAN clustering plots
 def apply_dbscan(embeddings):
+    from sklearn.cluster import DBSCAN  # Import DBSCAN locally
     for key, embedding in embeddings.items():
         dbscan = DBSCAN(eps=3 if key == 't-SNE' else 0.25 if key == 'UMAP' else 0.01, min_samples=3)
         clusters = dbscan.fit_predict(embedding)
@@ -53,6 +57,41 @@ def visualize_cm(true, pred):
     disp = ConfusionMatrixDisplay(confusion_matrix=cm)
     disp.plot()
     save_plot("SVM_Confusion_Matrix.png")
+
+# ----- Calls to generate all graphs -----
+
+# Sample data for PCA scatter plot
+pca_data = pd.DataFrame({
+    'PC1': np.random.rand(20),
+    'PC2': np.random.rand(20)
+})
+binary_labels = np.random.randint(0, 2, size=20)
+outliers = pd.DataFrame({
+    'PC1': [0.9, 0.95],
+    'PC2': [0.1, 0.15]
+})
+plot_pca_scatter(pca_data, binary_labels, outliers)
+
+# Sample data for DBSCAN clustering plots
+embeddings = {
+    't-SNE': np.random.rand(30, 2),
+    'UMAP': np.random.rand(30, 2),
+    'Other': np.random.rand(30, 2)
+}
+apply_dbscan(embeddings)
+
+# Sample data for PHATE visualization
+phate_df = pd.DataFrame({
+    'classID': np.random.choice([0, 1, 2], size=50),
+    'PHATE1': np.random.rand(50),
+    'PHATE2': np.random.rand(50)
+})
+visualize_phate(phate_df)
+
+# Sample data for confusion matrix visualization
+true_labels = np.random.randint(0, 3, size=15)
+pred_labels = np.random.randint(0, 3, size=15)
+visualize_cm(true_labels, pred_labels)
 
 # Sample test plot to verify the fix
 plt.plot([1, 2, 3], [4, 5, 6])
