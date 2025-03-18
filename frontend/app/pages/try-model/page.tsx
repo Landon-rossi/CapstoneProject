@@ -1,29 +1,74 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { NextPage } from 'next';
 
-const ModelPage: NextPage = () => {
-    const [modelOutput, setModelOutput] = useState<string>('');
+const ModelPage = () => {
+    const [models, setModels] = useState<string[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string>('');
+    const [modelImages, setModelImages] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [selectedModel, setSelectedModel] = useState<string>('modelA');
+    const [isInstalling, setIsInstalling] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const response = await fetch('/api/models');
+                const data = await response.json();
+                if (data.models) {
+                    setModels(data.models);
+                } else {
+                    console.error('Error fetching models:', data.error);
+                }
+            } catch (error: any) {
+                console.error('Error:', error.message);
+            }
+        };
+        fetchModels();
+    }, []);
+
+    const handleModelSelect = async (model: string) => {
+        setSelectedModel(model);
+        setIsInstalling(true);
+        setModelImages([]);
+
+        try {
+            const response = await fetch(`/api/installModel?model=${model}`);
+            const data = await response.json();
+
+            if (data.error) {
+                console.error(`Installation Error: ${data.error}`);
+            } else {
+                console.log(data.message);
+            }
+        } catch (error: any) {
+            console.error(`Installation Error: ${error.message}`);
+        } finally {
+            setIsInstalling(false);
+        }
+    };
 
     const handleRunModel = async () => {
-        setModelOutput('');
+        if (!selectedModel || isInstalling) return;
+
         setIsLoading(true);
+        setModelImages([]);
 
         try {
             const response = await fetch(`/api/runModel?model=${selectedModel}`);
             const data = await response.json();
-            if (data.error) {
-                setModelOutput(`Error: ${data.error}`);
+
+            if (data.images) {
+                console.log("Received image paths:", data.images);
+
+                setModelImages(
+                    data.images.map((img: string) => `/graphs/${img.trim()}?t=${new Date().getTime()}`)
+                );
             } else {
-                setModelOutput(data.output);
+                console.error('Error fetching images:', data.error);
             }
         } catch (error: any) {
             console.error(`Error: ${error.message}`);
-            setModelOutput(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -40,18 +85,28 @@ const ModelPage: NextPage = () => {
                 <div className="flex justify-center space-x-4">
                     <select
                         value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
+                        onChange={(e) => handleModelSelect(e.target.value)}
                         className="rounded-full px-4 py-2 text-black"
                     >
-                        <option value="modelA">Model A</option>
-                        <option value="modelB">Model B</option>
-                        {/* Add more models as needed */}
+                        <option value="">Select a model</option>
+                        {models.map((model) => (
+                            <option key={model} value={model}>{model}</option>
+                        ))}
                     </select>
+                </div>
+
+                {isInstalling && (
+                    <p className="text-center text-yellow-300 mt-4">
+                        Installing {selectedModel}... Please wait.
+                    </p>
+                )}
+
+                <div className="flex justify-center mt-4">
                     <button
                         onClick={handleRunModel}
-                        disabled={isLoading}
+                        disabled={!selectedModel || isInstalling || isLoading}
                         className={`rounded-full px-6 py-3 font-bold transition ${
-                            isLoading
+                            !selectedModel || isInstalling || isLoading
                                 ? 'bg-gray-400 text-gray-800 cursor-not-allowed'
                                 : 'bg-yellow-500 text-black hover:bg-yellow-400'
                         }`}
@@ -60,10 +115,11 @@ const ModelPage: NextPage = () => {
                     </button>
                 </div>
 
-                {modelOutput && (
-                    <div className="mt-8 bg-white/10 p-4 rounded-md">
-                        <h2 className="text-yellow-400 font-semibold mb-2">Model Output:</h2>
-                        <pre className="whitespace-pre-wrap">{modelOutput}</pre>
+                {modelImages.length > 0 && (
+                    <div className="mt-8 grid grid-cols-2 gap-4">
+                        {modelImages.map((img, index) => (
+                            <img key={index} src={img} alt={`Model Output ${index}`} className="rounded-lg shadow-lg w-full h-auto" />
+                        ))}
                     </div>
                 )}
             </main>

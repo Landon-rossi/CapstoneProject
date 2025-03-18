@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -e  # Stop script on error
 
 REQUIRED_VERSION="3.10"
 
@@ -20,26 +20,30 @@ if [[ "$INSTALLED_VERSION" != $REQUIRED_VERSION* ]]; then
 fi
 echo "Using Python $INSTALLED_VERSION from $PYTHON_CMD."
 
-# 3. Remove and recreate the virtual environment.
-if [ -d "env" ]; then
-    echo "Removing existing 'env'..."
-    rm -rf env
+# 3. Navigate to the correct model directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# 4. Remove and recreate the virtual environment inside the model directory
+VENV_DIR="$SCRIPT_DIR/env"
+if [ -d "$VENV_DIR" ]; then
+    echo "Removing existing virtual environment at $VENV_DIR..."
+    rm -rf "$VENV_DIR"
 fi
 
-echo "Creating new virtual environment..."
-$PYTHON_CMD -m venv env
+echo "Creating new virtual environment at $VENV_DIR..."
+$PYTHON_CMD -m venv "$VENV_DIR"
 
+# 5. Activate the model-specific virtual environment
 echo "Activating virtual environment..."
-source env/bin/activate
+source "$VENV_DIR/bin/activate"
 
-# 4. Upgrade build tools.
+# 6. Upgrade build tools
 echo "Upgrading pip, setuptools, and wheel..."
 pip install --upgrade pip setuptools wheel
 
-# 5. Install from requirements.txt.
-echo "Installing requirements..."
-pip install -r requirements.txt
+# 7. Install dependencies from requirements.txt
+echo "Installing dependencies..."
+pip install -r "$SCRIPT_DIR/requirements.txt"
 
-# 6. Run your Python script.
-# echo "Running test_python.py..."
-# python test_python.py
+echo "Installation complete!"
