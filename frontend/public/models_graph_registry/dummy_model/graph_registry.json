@@ -1,0 +1,38 @@
+{
+  "graphs": [
+    {
+      "id": "pca",
+      "label": "PCA Drug Sensitivity",
+      "script": "run_model.py",
+      "params": {
+        "alpha": "0.6"
+      }
+    },
+    {
+      "id": "dbscan",
+      "label": "DBSCAN Clustering",
+      "script": "run_model.py",
+      "params": {
+        "eps_tsne": "3",
+        "eps_umap": "0.25",
+        "eps_other": "0.01"
+      }
+    },
+    {
+      "id": "phate",
+      "label": "PHATE Patent Data",
+      "script": "run_model.py",
+      "params": {
+        "opacity": "0.2"
+      }
+    },
+    {
+      "id": "cm",
+      "label": "Confusion Matrix",
+      "script": "run_model.py",
+      "params": {
+        "labels": "3"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "graphs": [
+    { "id": "1", "label": "Line 1", "script": "run_model.py", "params": { "m": "1", "b": "4" } },
+    { "id": "2", "label": "Line 2", "script": "run_model.py", "params": { "m": "1", "b": "-4" } },
+    { "id": "3", "label": "Line 3", "script": "run_model.py", "params": { "m": "-1", "b": "4" } },
+    { "id": "4", "label": "Line 4", "script": "run_model.py", "params": { "m": "-1", "b": "-4" } },
+    { "id": "5", "label": "Line 5", "script": "run_model.py", "params": { "m": "2", "b": "1" } },
+    { "id": "6", "label": "Line 6", "script": "run_model.py", "params": { "m": "2", "b": "-1" } },
+    { "id": "7", "label": "Line 7", "script": "run_model.py", "params": { "m": "-2", "b": "1" } },
+    { "id": "8", "label": "Line 8", "script": "run_model.py", "params": { "m": "-2", "b": "-1" } },
+    { "id": "9", "label": "Line 9", "script": "run_model.py", "params": { "m": "0", "b": "5" } },
+    { "id": "10", "label": "Line 10", "script": "run_model.py", "params": { "m": "0", "b": "-5" } }
+  ]
+}
