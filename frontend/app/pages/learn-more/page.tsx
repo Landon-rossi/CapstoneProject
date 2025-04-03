@@ -1,4 +1,6 @@
 import Link from "next/link";
+import SolarWindAI from "../../components/SolarWindAI";
+import GeminiAI from "../../components/GeminiAI";
 
 export default function LearnMore() {
     return (
@@ -25,7 +27,7 @@ export default function LearnMore() {
 
                 <Link href="/learn-more/solar-wind-effects" className="group block p-6 bg-yellow-500/10 rounded-xl shadow-lg transform transition duration-300 hover:scale-105 hover:bg-yellow-500/20">
                     <div className="text-center">
-                        <h3 className="text-2xl font-bold text-yellow-300 group-hover:text-yellow-400">Earth’s Impact</h3>
+                        <h3 className="text-2xl font-bold text-yellow-300 group-hover:text-yellow-400">Earth's Impact</h3>
                         <p className="mt-2 text-sm opacity-75 group-hover:opacity-100">How does it affect our planet?</p>
                     </div>
                 </Link>
@@ -40,8 +42,8 @@ export default function LearnMore() {
 
             <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-12 mt-12">
                 <div className="p-6 bg-gray-800/50 rounded-xl shadow-lg">
-                    <h3 className="text-xl font-semibold text-yellow-400">The Sun’s Magnetic Field</h3>
-                    <p className="mt-2 text-sm opacity-75">How the sun’s magnetic forces shape the solar system.</p>
+                    <h3 className="text-xl font-semibold text-yellow-400">The Sun's Magnetic Field</h3>
+                    <p className="mt-2 text-sm opacity-75">How the sun's magnetic forces shape the solar system.</p>
                 </div>
                 <div className="p-6 bg-gray-800/50 rounded-xl shadow-lg">
                     <h3 className="text-xl font-semibold text-yellow-400">Geomagnetic Storms</h3>
@@ -50,6 +52,20 @@ export default function LearnMore() {
                 <div className="p-6 bg-gray-800/50 rounded-xl shadow-lg">
                     <h3 className="text-xl font-semibold text-yellow-400">Space Weather Predictions</h3>
                     <p className="mt-2 text-sm opacity-75">How scientists predict solar activity and mitigate risks.</p>
+                </div>
+            </section>
+
+            <section className="mt-12 px-4 sm:px-12">
+                <h2 className="text-4xl font-bold text-yellow-400 text-center mb-8">Chat with Our AI Solar Wind Experts</h2>
+                <div className="grid gap-8 md:grid-cols-2">
+                    <div>
+                        <h3 className="text-2xl font-bold text-yellow-400 text-center mb-4">OpenAI Expert</h3>
+                        <SolarWindAI />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-bold text-yellow-400 text-center mb-4">Gemini Expert</h3>
+                        <GeminiAI />
+                    </div>
                 </div>
             </section>
 
