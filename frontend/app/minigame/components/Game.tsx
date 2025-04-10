@@ -1,22 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { drawGame } from "@/app/minigame/components/GameRender";
 
 interface GameProps {
-    onWaveComplete: (wave: number) => void;
-    stormType: "normal" | "high-speed" | "dense"; // New storm type from forecast
+    waveNumber: number;
+    stormType: "normal" | "high-speed" | "dense";
+    onWaveCleared: () => void;
 }
 
-const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
-    // Game objects
+const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared }) => {
     const [magnetosphere, setMagnetosphere] = useState(100);
     const [solarWind, setSolarWind] = useState<{ x: number; y: number; speed: number }[]>([]);
-
-    // Wave management
-    const [waveNumber, setWaveNumber] = useState(1);
     const [waveCleared, setWaveCleared] = useState(false);
-    const [showNextWaveButton, setShowNextWaveButton] = useState(false); // State to show "Next Wave" button
-
     const [gameOver, setGameOver] = useState(false);
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -25,12 +21,11 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
     const earthPosition = { x: 750, y: 300 };
     const magnetosphereRadius = 60;
 
-    // Load images
     const earthImg = useRef<HTMLImageElement | null>(null);
     const magnetosphereImg = useRef<HTMLImageElement | null>(null);
     const solarWindImg = useRef<HTMLImageElement | null>(null);
     const gameOverImg = useRef<HTMLImageElement | null>(null);
-    //**Load Images**//
+
     useEffect(() => {
         earthImg.current = new Image();
         earthImg.current.src = "/minigame/chat_earth.png";
@@ -45,24 +40,23 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
         gameOverImg.current.src = "/minigame/game_over.png";
     }, []);
 
-    //**Spawn Solar Winds**//
     const spawnSolarWind = useCallback((wave: number) => {
         if (gameOver) return;
-        const numberOfWinds = wave * 2 * (stormType === "dense" ? 100 : 1);
+        const numberOfWinds = wave * 2 * (stormType === "dense" ? 5 : 1);
         const newWinds = Array.from({ length: numberOfWinds }, () => ({
             x: -50,
             y: Math.random() * 500,
-            speed: 1 + Math.random() * (stormType === "high-speed" ? 2 : 1),
+            speed: 1 + Math.random() * (stormType === "high-speed" ? 3 : 1),
         }));
         setSolarWind(newWinds);
         setWaveCleared(false);
     }, [gameOver, stormType]);
 
+    // Call spawnSolarWind when waveNumber changes
     useEffect(() => {
         spawnSolarWind(waveNumber);
     }, [waveNumber, spawnSolarWind]);
 
-    //**Handle Game States**//
     const updateGame = useCallback(() => {
         if (gameOver) return;
 
@@ -94,41 +88,17 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
                 });
 
             if (updatedWind.length === 0 && !waveCleared) {
-                setWaveCleared(true); // Mark the wave as cleared when all solar wind is destroyed
-                setShowNextWaveButton(true); // Show "Next Wave" button
+                setWaveCleared(true);
+                onWaveCleared(); // Notify parent
             }
 
             return updatedWind;
         });
 
-        setMagnetosphere((prev) => Math.min(100, prev + 0.01)); // Slowly regenerate the magnetosphere
+        setMagnetosphere((prev) => Math.min(100, prev + 0.01));
         gameLoopRef.current = requestAnimationFrame(updateGame);
-    }, [waveCleared, gameOver, stormType]);
+    }, [waveCleared, gameOver, onWaveCleared]);
 
-    //**Handle Start Next Wave**//
-    const nextWave = () => {
-        setWaveNumber((prevWave) => {
-            const nextWave = prevWave + 1;
-            onWaveComplete(nextWave); // Notify parent of wave completion
-            setShowNextWaveButton(false); // Hide the "Next Wave" button once clicked
-            spawnSolarWind(nextWave);
-            return nextWave;
-        });
-    };
-
-    // useEffect(() => {
-    //     if (waveCleared && !gameOver) {
-    //         setTimeout(() => {
-    //             setWaveNumber((prevWave) => {
-    //                 const nextWave = prevWave + 1;
-    //                 onWaveComplete(prevWave);
-    //                 return nextWave;
-    //             });
-    //         }, 500);
-    //     }
-    // }, [waveCleared, onWaveComplete, gameOver]);
-
-    //**Handle Game Over**//
     useEffect(() => {
         if (!gameOver) {
             gameLoopRef.current = requestAnimationFrame(updateGame);
@@ -138,7 +108,6 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
         };
     }, [updateGame, gameOver]);
 
-    //**Handle User Input**//
     const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
         if (gameOver) return;
         const rect = canvasRef.current?.getBoundingClientRect();
@@ -148,37 +117,16 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
 
         setSolarWind((prevSolarWind) =>
             prevSolarWind.filter((wind) => {
-                const distance = Math.sqrt(Math.pow(wind.x - clickX, 2) + Math.pow(wind.y - clickY, 2));
-                return distance > 15; // Remove if click is close enough
+                const windCenterX = wind.x + 13;
+                const windCenterY = wind.y + 13;
+                const distance = Math.sqrt(Math.pow(windCenterX - clickX, 2) + Math.pow(windCenterY - clickY, 2));
+                return distance > 15;
             })
         );
     };
 
-
-    //**Handle Game Rendering**//
     const draw = useCallback((ctx: CanvasRenderingContext2D) => {
-        ctx.clearRect(0, 0, 800, 600);
-
-        if (earthImg.current) {
-            ctx.drawImage(earthImg.current, 700, 250, 100, 100);
-        }
-
-        if (magnetosphereImg.current && !gameOver) {
-            ctx.drawImage(magnetosphereImg.current, 670, 225, 160, 160);
-        }
-
-        solarWind.forEach((wind) => {
-            if (solarWindImg.current) {
-                ctx.drawImage(solarWindImg.current, wind.x, wind.y, 20, 20);
-            }
-        });
-
-        if (gameOver) {
-            if (gameOverImg.current) {
-                ctx.drawImage(gameOverImg.current, 250, 150, 300, 300);
-            }
-            // FIX ME: DRAW A DESTROYED EARTH HERE
-        }
+        drawGame(ctx, earthImg, magnetosphereImg, solarWindImg, gameOverImg, solarWind, gameOver);
     }, [solarWind, gameOver]);
 
     useEffect(() => {
@@ -189,7 +137,6 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
 
     const restartGame = () => {
         setMagnetosphere(100);
-        setWaveNumber(1);
         setSolarWind([]);
         setGameOver(false);
     };
@@ -199,9 +146,6 @@ const Game: React.FC<GameProps> = ({ onWaveComplete, stormType }) => {
             <canvas ref={canvasRef} width={800} height={600} className="border" onClick={handleCanvasClick} />
             <p>Wave: {waveNumber}</p>
             <p>Magnetosphere Health: {magnetosphere.toFixed(2)}</p>
-            {showNextWaveButton && !gameOver && (
-                <button onClick={nextWave} className="px-4 py-2 bg-green-500 text-white font-bold rounded">Next Wave</button>
-            )}
             {gameOver && <p className="text-red-500 font-bold text-lg">GAME OVER</p>}
             {gameOver && <button onClick={restartGame} className="px-4 py-2 bg-blue-500 text-white font-bold rounded">Restart</button>}
         </div>

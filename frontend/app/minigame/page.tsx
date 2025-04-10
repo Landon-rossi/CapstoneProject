@@ -1,58 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ScientistDialogue from "@/app/minigame/components/ScientistDialogue";
 import Game from "@/app/minigame/components/Game";
 
-export default function Minigame() {
-    const [showDialogue, setShowDialogue] = useState(false);
-    const [dialogueMessage, setDialogueMessage] = useState("");
-    const [currentWave, setCurrentWave] = useState(1);
-    const [stormType, setStormType] = useState<"normal" | "high-speed" | "dense">("normal");
-    const [gameStarted, setGameStarted] = useState(false);
+// Function to generate forecast messages for each wave
+const getForecastForWave = (wave: number) => {
+    if (wave % 5 === 0) return { stormType: "dense", message: "Heads up! A dense solar wind is approaching.\n" };
+    if (wave % 3 === 0) return { stormType: "high-speed", message: "Caution! High-speed solar winds incoming.\n" };
+    return { stormType: "normal", message: "Solar wind levels are steady. Prepare as usual.\n" };
+};
 
-    // Dialogue messages mapped to specific waves.
-    const waveDialogues: { [key: number]: string } = {
-        1: "Click on the solar winds!",
-        2: "Great job! You survived the first wave!",
-        3: "Did you know that High Velocity solar winds interacting with the Earth's atmosphere can create auroras?",
-        4: "Our AI model has classified this storm as High Velocity!\n" +
-            "These winds move at over 500km/s\n" +
-            "and occur from Coronal Mass Ejections (CMEs).",
-        5: "CMEs are large eruptions of plasma from the Sun's corona.\n" +
-            "Those High Velocity solar winds could have disrupted\n" +
-            "radio, satellites, and power grids if you hadn't stopped them!",
-        6: "This storm is Dense. Watch out, there will be many more solar winds incoming!",
+export default function GamePage() {
+    const [waveNumber, setWaveNumber] = useState(1); // Track the current wave
+    const [showDialogue, setShowDialogue] = useState(true); // Show dialogue for each wave
+    const [readyForNextWave, setReadyForNextWave] = useState(false); // Enable Next Wave button when the wave is cleared
+    const [gameStarted, setGameStarted] = useState(false); // Start the game logic
+
+    // Get forecast based on the current wave number
+    const forecast = getForecastForWave(waveNumber);
+    const stormType = forecast.stormType as "normal" | "high-speed" | "dense";
+
+    // Handle when a wave is cleared
+    const handleWaveCleared = () => {
+        setShowDialogue(true); // Show dialogue for next wave
+        setReadyForNextWave(true); // Enable the "Next Wave" button
     };
 
-    // Function to handle wave completion
-    const handleWaveCompletion = (wave: number) => {
-        setCurrentWave(wave + 1); // Increase wave count
-
-        if (waveDialogues[wave]) {
-            setDialogueMessage(waveDialogues[wave]);
-            setShowDialogue(true);
-        }
-
-        if (wave === 3) {
-            setStormType("high-speed");
-        } else if (wave === 5) {
-            setStormType("dense");
-        } else {
-            setStormType("normal");
-        }
+    // Handle clicking "Next Wave" button to progress to the next wave
+    const handleNextWaveClick = () => {
+        setWaveNumber((prev) => prev + 1); // Increment the wave number
+        setShowDialogue(false); // Hide dialogue and start game
+        setReadyForNextWave(false); // Disable the Next Wave button until the wave is cleared
     };
 
-    // Start the game
+    // Start the game with the first wave
     const startGame = () => {
         setGameStarted(true);
-        handleWaveCompletion(1); // Start the game with wave 1 dialogue
+        setWaveNumber(1); // Reset the wave number to 1
+        setShowDialogue(true); // Show dialogue for the first wave
+        setReadyForNextWave(false); // Disable Next Wave button
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-            <h1 className="text-3xl font-bold">Solar Wind Defense Game</h1>
-
+        <div className="flex flex-col items-center space-y-6">
+            {/* Start Game Button */}
             {!gameStarted && (
                 <button
                     onClick={startGame}
@@ -62,22 +54,37 @@ export default function Minigame() {
                 </button>
             )}
 
-            {/* Game Component (Pass stormType directly) */}
-            {gameStarted && <Game onWaveComplete={handleWaveCompletion} stormType={stormType} />}
+            {/* Scientist Dialogue */}
+            {showDialogue && (
+                <div className="max-w-xl">
+                    <ScientistDialogue
+                        message={forecast.message}
+                        imageOpen="/minigame/scientist_open.png"
+                        imageClosed="/minigame/scientist_closed.png"
+                    />
 
-            {/* Scientist Dialogue Component */}
-            <ScientistDialogue
-                message={dialogueMessage}
-                isVisible={showDialogue}
-                onClose={() => {
-                    setShowDialogue(false);
-                    if (gameStarted) {
-                        handleWaveCompletion(currentWave); // Proceed to the next wave when the dialogue is closed
-                    }
-                }}
-                imageOpen="/minigame/scientist_open.png"
-                imageClosed="/minigame/scientist_closed.png"
-            />
+                    {/* Next Wave Button */}
+                    {readyForNextWave ? (
+                        <button
+                            onClick={handleNextWaveClick}
+                            className="mt-4 px-6 py-2 bg-green-600 text-white font-bold rounded"
+                        >
+                            Next Wave
+                        </button>
+                    ) : (
+                        <p className="mt-4 text-gray-500">Clearing solar winds...</p>
+                    )}
+                </div>
+            )}
+
+            {/* Game Component */}
+            {!showDialogue && (
+                <Game
+                    waveNumber={waveNumber}
+                    stormType={stormType}
+                    onWaveCleared={handleWaveCleared}
+                />
+            )}
         </div>
     );
 }
