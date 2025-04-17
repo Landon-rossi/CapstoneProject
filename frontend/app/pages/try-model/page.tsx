@@ -17,6 +17,18 @@ type OutputEntry = {
     images: string[];
 };
 
+type ParamValues = { [key: string]: string };
+
+type GraphState = {
+    paramValues: ParamValues;
+    outputGraphs: OutputEntry[];
+    completedGraphs: string[];
+};
+
+type HistoryEntry = {
+    id: string;
+} & GraphState;
+
 const ModelPage = () => {
     const [models, setModels] = useState<string[]>([]);
     const [selectedModel, setSelectedModel] = useState<string>('');
@@ -24,16 +36,12 @@ const ModelPage = () => {
     const [completedGraphs, setCompletedGraphs] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isInstalling, setIsInstalling] = useState<boolean>(false);
-    const [paramValues, setParamValues] = useState<{ [key: string]: string }>({});
+    const [paramValues, setParamValues] = useState<ParamValues>({});
     const [outputGraphs, setOutputGraphs] = useState<OutputEntry[]>([]);
     const [currentGraphIndexMap, setCurrentGraphIndexMap] = useState<{ [key: string]: number }>({});
-    const [history, setHistory] = useState<{ id: string, paramValues: any, outputGraphs: any, completedGraphs: any }[]>([]);
+    const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [selectedHistoryId, setSelectedHistoryId] = useState<string>('');
-    const [liveState, setLiveState] = useState<{
-        paramValues: any;
-        outputGraphs: any;
-        completedGraphs: any;
-    } | null>(null);
+    const [liveState, setLiveState] = useState<GraphState | null>(null);
 
 
     // Fetches available models from frontend/app/models when the page loads
@@ -47,8 +55,12 @@ const ModelPage = () => {
                 } else {
                     console.error('Error fetching models:', data.error);
                 }
-            } catch (error: any) {
-                console.error('Error:', error.message);
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error('Error:', error.message);
+                } else {
+                    console.error('Unknown error:', error);
+                }
             }
         };
         fetchModels();
@@ -97,11 +109,9 @@ const ModelPage = () => {
                 // Initialize default param values
                 if (json.graphs?.length > 0) {
                     const initialParams: { [key: string]: string } = {};
-                    json.graphs.forEach((g: any) => {
-                        Object.entries(g.params || {}).forEach(([key, val]) => {
-                            if (typeof val === "string") {
-                                initialParams[`${g.id}-${key}`] = val;
-                            }
+                    (json.graphs as GraphEntry[]).forEach((g) => {
+                        Object.entries(g.params ?? {}).forEach(([key, val]) => {
+                            initialParams[`${g.id}-${key}`] = val;
                         });
                     });
                     setParamValues(initialParams);
@@ -110,8 +120,12 @@ const ModelPage = () => {
                 console.error("⚠️ No graph registry found for this model.");
                 setGraphRegistry([]);
             }
-        } catch (error: any) {
-            console.error(`Installation Error: ${error.message}`);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(`Installation Error: ${error.message}`);
+            } else {
+                console.error("Installation Error:", error);
+            }
         } finally {
             // ✅ Always reset installing state!
             setIsInstalling(false);
@@ -165,14 +179,10 @@ const ModelPage = () => {
             // Check if response is JSON or HTML error
             try {
                 data = await res.json();
-            } catch (jsonErr) {
+            } catch {
                 const text = await res.text();
                 console.error("❌ Server returned non-JSON response:", text);
                 throw new Error("Invalid response format from /api/runModel");
-            }
-
-            if (!res.ok || data.error) {
-                throw new Error(data?.error || "Graph execution failed.");
             }
 
             if (data.images) {
@@ -218,8 +228,12 @@ const ModelPage = () => {
             } else {
                 console.error("Error running graph:", data.error);
             }
-        } catch (error: any) {
-            console.error("Run graph error:", error.message);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Run graph error:", error.message);
+            } else {
+                console.error("Run graph error:", error);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -261,8 +275,12 @@ const ModelPage = () => {
             } else {
                 console.error('Error fetching images:', data.error);
             }
-        } catch (error: any) {
-            console.error(`Error: ${error.message}`);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Run model error:", error.message);
+            } else {
+                console.error("Run model error:", error);
+            }
         } finally {
             setIsLoading(false);
         }
