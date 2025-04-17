@@ -59,7 +59,7 @@ const ModelPage = () => {
         setSelectedModel(model);
         setIsInstalling(true);
 
-        // Reset everything when selecting new model
+        // Clear previous state
         setHistory([]);
         setSelectedHistoryId('');
         setOutputGraphs([]);
@@ -68,11 +68,18 @@ const ModelPage = () => {
         setParamValues({});
         setCurrentGraphIndexMap({});
 
-
         try {
-            // Call API to set up Python env and deps
+            // SAFELY call installModel and always parse JSON
             const response = await fetch(`/api/installModel?model=${model}`);
-            const data = await response.json();
+            const text = await response.text();
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch {
+                console.error("❌ Non-JSON response from installModel:\n", text);
+                throw new Error("Failed to parse installModel response");
+            }
 
             if (data.error) {
                 console.error(`Installation Error: ${data.error}`);
@@ -80,12 +87,14 @@ const ModelPage = () => {
                 console.log(data.message);
             }
 
-            // Load each graph from the respective model
+            // Load graph registry even if install was skipped
             const registryPath = `/models_graph_registry/${model}/graph_registry.json`;
             try {
                 const res = await fetch(registryPath);
                 const json = await res.json();
                 setGraphRegistry(json.graphs || []);
+
+                // Initialize default param values
                 if (json.graphs?.length > 0) {
                     const initialParams: { [key: string]: string } = {};
                     json.graphs.forEach((g: any) => {
@@ -98,12 +107,13 @@ const ModelPage = () => {
                     setParamValues(initialParams);
                 }
             } catch {
-                console.error("No graph registry found for this model.");
+                console.error("⚠️ No graph registry found for this model.");
                 setGraphRegistry([]);
             }
         } catch (error: any) {
             console.error(`Installation Error: ${error.message}`);
         } finally {
+            // ✅ Always reset installing state!
             setIsInstalling(false);
         }
     };
@@ -125,9 +135,7 @@ const ModelPage = () => {
 
         const alreadyCompleted = completedGraphs.includes(graphId);
 
-        // Save history only if:
-        // - We're replacing a completed step
-        // - OR we’re modifying after previewing a historical version
+        // Save history if editing a completed step or a historical version
         if (alreadyCompleted) {
             setHistory((prev) => [
                 ...prev,
@@ -152,7 +160,20 @@ const ModelPage = () => {
 
         try {
             const res = await fetch(`/api/runModel?${queryStr}`);
-            const data = await res.json();
+            let data;
+
+            // Check if response is JSON or HTML error
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                const text = await res.text();
+                console.error("❌ Server returned non-JSON response:", text);
+                throw new Error("Invalid response format from /api/runModel");
+            }
+
+            if (!res.ok || data.error) {
+                throw new Error(data?.error || "Graph execution failed.");
+            }
 
             if (data.images) {
                 // Replace this step and clear future steps
@@ -181,7 +202,6 @@ const ModelPage = () => {
                     return newMap;
                 });
 
-                // Save current state as the new working version
                 setLiveState({
                     paramValues: { ...paramValues },
                     outputGraphs: [
@@ -194,7 +214,6 @@ const ModelPage = () => {
                     completedGraphs: [...completedGraphs.slice(0, stepIndex), graphId]
                 });
 
-                // Reset selectedHistoryId if coming from a previous version
                 setSelectedHistoryId('');
             } else {
                 console.error("Error running graph:", data.error);
@@ -206,6 +225,7 @@ const ModelPage = () => {
         }
     };
 
+
     // Runs all graphs (default run_model.py)
     const runDefaultModel = async () => {
         if (!selectedModel || isInstalling) return;
@@ -216,7 +236,20 @@ const ModelPage = () => {
 
         try {
             const response = await fetch(`/api/runModel?model=${selectedModel}`);
-            const data = await response.json();
+            const raw = await response.text(); // ✅ Only read body once
+
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch {
+                console.error("❌ Response was not JSON:\n", raw);
+                throw new Error("Server returned non-JSON response. Check backend.");
+            }
+
+            if (!response.ok || data.error) {
+                console.error("Run model error:", data?.error || "Request failed");
+                return;
+            }
 
             if (data.images) {
                 setOutputGraphs([

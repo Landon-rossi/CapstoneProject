@@ -8,7 +8,8 @@ import argparse
 import pickle
 
 # Setup output directory
-output_dir = os.path.join(os.getcwd(), "public", "graphs")
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+output_dir = os.path.join(project_root, 'public', 'graphs')
 os.makedirs(output_dir, exist_ok=True)
 
 STATE_FILE = "model_state.pkl"
