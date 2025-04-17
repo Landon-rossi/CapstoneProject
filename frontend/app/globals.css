@@ -56,7 +56,3 @@ body {
     grid-column-end: 5;
   }
 }
-
-.game-area {
-  cursor: url('/earth-icon.png') 16 16, auto;
-}
