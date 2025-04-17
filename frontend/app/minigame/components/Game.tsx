@@ -7,9 +7,10 @@ interface GameProps {
     waveNumber: number;
     stormType: "normal" | "high-speed" | "dense";
     onWaveCleared: () => void;
+    onRestart: () => void;
 }
 
-const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared }) => {
+const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared, onRestart }) => {
     const [magnetosphere, setMagnetosphere] = useState(100);
     const [solarWind, setSolarWind] = useState<{ x: number; y: number; speed: number }[]>([]);
     const [waveCleared, setWaveCleared] = useState(false);
@@ -89,7 +90,6 @@ const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared }) => 
 
             if (updatedWind.length === 0 && !waveCleared) {
                 setWaveCleared(true);
-                onWaveCleared(); // Notify parent
             }
 
             return updatedWind;
@@ -135,11 +135,12 @@ const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared }) => 
         if (ctx) draw(ctx);
     }, [solarWind, magnetosphere, draw, gameOver]);
 
-    const restartGame = () => {
-        setMagnetosphere(100);
-        setSolarWind([]);
-        setGameOver(false);
-    };
+
+    useEffect(() => {
+        if (waveCleared && !gameOver) {
+            onWaveCleared();
+        }
+    }, [waveCleared, gameOver, onWaveCleared]);
 
     return (
         <div>
@@ -147,7 +148,14 @@ const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared }) => 
             <p>Wave: {waveNumber}</p>
             <p>Magnetosphere Health: {magnetosphere.toFixed(2)}</p>
             {gameOver && <p className="text-red-500 font-bold text-lg">GAME OVER</p>}
-            {gameOver && <button onClick={restartGame} className="px-4 py-2 bg-blue-500 text-white font-bold rounded">Restart</button>}
+            {gameOver && (
+                <button
+                    onClick={onRestart}
+                    className="px-4 py-2 bg-blue-500 text-white font-bold rounded"
+                >
+                    Restart
+                </button>
+            )}
         </div>
     );
 };

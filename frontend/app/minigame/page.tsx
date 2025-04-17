@@ -37,9 +37,16 @@ export default function GamePage() {
     // Start the game with the first wave
     const startGame = () => {
         setGameStarted(true);
-        setWaveNumber(1); // Reset the wave number to 1
-        setShowDialogue(true); // Show dialogue for the first wave
-        setReadyForNextWave(false); // Disable Next Wave button
+        setWaveNumber(1);
+        setShowDialogue(false); // <<< Add this line
+        setReadyForNextWave(false);
+    };
+
+    const handleRestart = () => {
+        setWaveNumber(1);
+        setShowDialogue(false);
+        setReadyForNextWave(false);
+        setGameStarted(true);
     };
 
     return (
@@ -80,9 +87,11 @@ export default function GamePage() {
             {/* Game Component */}
             {!showDialogue && (
                 <Game
+                    key={waveNumber === 1 && !showDialogue ? "new" : "playing"}
                     waveNumber={waveNumber}
                     stormType={stormType}
                     onWaveCleared={handleWaveCleared}
+                    onRestart={handleRestart}
                 />
             )}
         </div>
