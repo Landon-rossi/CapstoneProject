@@ -97,7 +97,5 @@ Our team coordinated development using Git-based version control and a milestone
 
 ### 📨 Contact Page
 - Displays profiles of all team members with photos, roles, emails, and contribution descriptions.
-- Located at `frontend/app/pages/contact/page.tsx`.
-- Uses `public/contact/*.png` for team member avatars.
 - Serves as an introduction to the development team for professors, users, and collaborators.
 
