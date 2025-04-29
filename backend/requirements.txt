@@ -1,0 +1,10 @@
+gradio==3.46.1
+fastapi==0.103.1
+starlette==0.27.0
+uvicorn[standard]==0.23.2
+pydantic==1.10.13  # if you're not using FastAPI with Pydantic v2
+numpy
+pandas
+scikit-learn
+keras
+tensorflow
