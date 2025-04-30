@@ -36,12 +36,12 @@ export default function ModelPage() {
 
             {/* RIGHT PANEL */}
             <div className="flex-1 p-8 space-y-8">
-                <div className="bg-white/5 p-4 rounded shadow-md w-full h-[600px]">
+                <div className="bg-white/5 p-4 rounded shadow-md w-full h-[900px]">
                     <h2 className="text-xl font-bold mb-4 text-yellow-400 border-b pb-1 border-yellow-500">
                         Gradio App
                     </h2>
                     <iframe
-                        src="http://127.0.0.0:8000"
+                        src="http://127.0.0.1:7860"
                         className="w-full h-full rounded border-2 border-yellow-400"
                     />
                 </div>
