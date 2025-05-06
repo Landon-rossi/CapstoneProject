@@ -28,13 +28,50 @@ Solar winds can cause major disruptions to Earth's communication systems, satell
 ## 🛠️ Developer and Architecture Notes
 
 ### 🧱 Project Setup
-To run the backend locally:
+## Running the Backend Locally
+
+### Prerequisites
+- **Python 3.10**
+  - **macOS:**
+    ```bash
+    brew install python@3.10
+    ```
+  - **Windows:**
+    Download & install from https://python.org (make sure to check “Add Python to PATH”).
+
+### 1. Create & Activate a Virtual Environment
+
+#### macOS / Linux
 ```bash
 cd backend
+python3.10 -m venv venv --copies
 source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app:app --reload --port 8000
 ```
+
+#### Windows (PowerShell)
+```powershell
+cd backend
+python -m venv venv
+venv\Scripts\Activate
+```
+
+### 2. Bootstrap & Install Dependencies
+```bash
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+> ✅ **Apple Silicon users:**  
+> `tensorflow==2.15.0` includes native macOS support — no need for `tensorflow-macos` or `tensorflow-metal`.
+
+### 3. Run the Server
+```bash
+python -m uvicorn app:app --reload --port 8000
+```
+
+- **Gradio UI:** http://localhost:8000/gradio
+- **FastAPI docs:** http://localhost:8000/docs
+- **API endpoint:** POST http://localhost:8000/run
 To run the frontend locally:
 ```bash
 cd frontend
