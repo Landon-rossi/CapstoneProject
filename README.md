@@ -28,18 +28,20 @@ Solar winds can cause major disruptions to Earth's communication systems, satell
 ## 🛠️ Developer and Architecture Notes
 
 ### 🧱 Project Setup
+To run the backend locally:
+```bash
+cd backend
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+```
 To run the frontend locally:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-To run the backend locally:
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app:app --reload --port 8000
-```
+
 This launches the development server at `http://localhost:3000` with hot reload support.
 
 ### 🗂️ File Structure Overview
