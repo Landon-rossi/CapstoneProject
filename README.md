@@ -72,7 +72,7 @@ python -m uvicorn app:app --reload --port 8000
 - **Gradio UI:** http://localhost:8000/gradio
 - **FastAPI docs:** http://localhost:8000/docs
 - **API endpoint:** POST http://localhost:8000/run
-To run the frontend locally:
+### 4. Run the frontend locally:
 ```bash
 cd frontend
 npm install
