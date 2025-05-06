@@ -9,36 +9,36 @@ export default function Contact() {
             name: "Grayson Odajima",
             role: "Data Scientist",
             email: "Grayson_Odajima1@baylor.edu",
-            image: "/GraysonOdajima.png",
+            image: "/contact/GraysonOdajima.png",
             description: "Developed the AI model and worked on data preprocessing.",
         },
         {
             name: "Landon Rossi",
             role: "Data Scientist",
             email: "Landon_Rossi2@baylor.edu",
-            image: "/LandonRossi.png",
+            image: "/contact/LandonRossi.png",
             description: "Implemented the deep learning pipeline and optimized model performance.",
         },
         {
             name: "Brad Buckingham",
-            role: "Frontend Developer",
+            role: "Full Stack Developer",
             email: "Brad_Buckingham1@baylor.edu",
-            image: "/BradBuckingham.png",
+            image: "/contact/BradBuckingham.png",
             description: "Designed the UI/UX and integrated the AI model into the frontend.",
         },
         {
             name: "Zhongbo Sun",
-            role: "Backend Developer",
+            role: "Full Stack Developer",
             email: "Zhongbo_Sun1@baylor.edu",
-            image: "/ZhongboSun.png",
+            image: "/contact/ZhongboSun.png",
             description: "Built the API and database for efficient model deployment.",
         },
         {
             name: "Kyle Hoang",
-            role: "Frontend Developer",
+            role: "Full Stack Developer",
             email: "Kyle_Hoang2@baylor.edu",
-            image: "/KyleHoang.png",
-            description: "Analyzed solar wind data and improved classification accuracy.",
+            image: "/contact/KyleHoang.png",
+            description: "Built the website and integrated the AI model into the frontend.",
         },
     ];
 
@@ -56,7 +56,7 @@ export default function Contact() {
             <section className="px-8 py-16 sm:px-20 bg-black/70 text-center">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-yellow-400">Project Client</h2>
                 <div className="flex flex-col items-center bg-white/10 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-                    <Image src="/HenryHan.png" alt="Professor" width={150} height={150} className="rounded-full mb-4 object-cover w-[150px] h-[150px]" />
+                    <Image src="/contact/HenryHan.png" alt="Professor" width={150} height={150} className="rounded-full mb-4 object-cover w-[150px] h-[150px]" />
                     <h3 className="text-xl font-semibold">Dr. Henry Han</h3>
                     <p className="text-yellow-300">McCollum Family Chair in Data Science; Professor</p>
                     <p className="mt-4">Oversaw the project, provided domain expertise, and guided research development.</p>

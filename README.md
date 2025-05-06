@@ -34,6 +34,12 @@ cd frontend
 npm install
 npm run dev
 ```
+To run the backend locally:
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+```
 This launches the development server at `http://localhost:3000` with hot reload support.
 
 ### 🗂️ File Structure Overview
@@ -52,9 +58,19 @@ frontend/
 ├── tsconfig.json                # TypeScript config
 └── package.json                 # Project dependencies
 ```
+```plaintext
+backend/
+├── .venv/                        # Python virtual environment
+├── app.py                        # Gradio interface and model api
+├── minmaxtrainset.csv            # Min/Max model data
+├── model_runner.py               # Min/Max and Power Transformer Models
+├── pwrtrantrainset.csv           # Power Transformer model data
+├── requirements.txt              # Python dependencies
+└── SO_ML_2022Jan_to_2023Apr.csv  # Solar Wind data
+```
 The project is structured around distinct functional domains—education, AI interaction, and simulation—each implemented as a self-contained module. This modular architecture supports easy future upgrades, including integration with real-time APIs and more advanced AI pipelines.
 
-For model behavior during development, a lightweight Python stub is included within the frontend. It allows interface testing and mock prediction flows without the need for backend infrastructure.
+For model behavior, a Python virtual environment backend runs the model.
 
 Development followed a version-controlled, milestone-based schedule. Each sprint introduced key functionality such as the layout, game logic, and model interface, enabling iterative refinement and consistent feature delivery.
 
