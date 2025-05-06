@@ -1,16 +1,13 @@
-'use client';
-import { useState } from 'react';
-import { callGradio } from '../../api/gradio/gradio';
 import Link from 'next/link';
 
 export default function ModelPage() {
-    const [input, setInput] = useState('');
-    const [output, setOutput] = useState('');
+    // const [input, setInput] = useState('');
+    // const [output, setOutput] = useState('');
 
-    const handleSubmit = async () => {
-        const result = await callGradio(input);
-        setOutput(result);
-    };
+    // const handleSubmit = async () => {
+    //     const result = await callGradio(input);
+    //     setOutput(result);
+    // };
 
     return (
         <div className="flex min-h-screen bg-gradient-to-b from-indigo-900 via-black to-yellow-600 text-white">

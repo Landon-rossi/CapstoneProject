@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from 'next/image';
 
 interface ScientistDialogueProps {
     message: string;
@@ -56,7 +57,7 @@ const ScientistDialogue: React.FC<ScientistDialogueProps> = ({ message, imageOpe
                 className="flex items-center space-x-4"
             >
                 <div className="relative w-32 h-32">
-                    <img src={currentImage} alt="Scientist" className="w-full h-full rounded-full shadow-md" />
+                    <Image src={currentImage} alt="Scientist" layout="fill" className="rounded-full shadow-md" />
                 </div>
 
                 <Card className="max-w-md">

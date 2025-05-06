@@ -97,7 +97,7 @@ const Game: React.FC<GameProps> = ({ waveNumber, stormType, onWaveCleared, onRes
 
         setMagnetosphere((prev) => Math.min(100, prev + 0.01));
         gameLoopRef.current = requestAnimationFrame(updateGame);
-    }, [waveCleared, gameOver, onWaveCleared]);
+    }, [waveCleared, gameOver, onWaveCleared, earthPosition.x, earthPosition.y]);
 
     useEffect(() => {
         if (!gameOver) {
