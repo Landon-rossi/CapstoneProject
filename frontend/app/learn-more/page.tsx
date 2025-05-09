@@ -1,11 +1,105 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
-import AIChat from "../components/AIChat";
+import { GoogleGenAI } from "@google/genai";
+import ReactMarkdown from 'react-markdown';
+
+// Define the Message type
+interface Message {
+    sender: "user" | "ai";
+    content: string;
+}
+
+// Initialize the GoogleGenAI instance
+const ai = new GoogleGenAI({ apiKey: "AIzaSyDPdkXHtJitay5xjkF101yi-mMimqsgvCQ" });
+
+// Function to handle chat messages
+const handleChat = async (message: string, messages: Message[]) => {
+    const chat = ai.chats.create({
+        model: "gemini-2.0-flash",
+        history: messages.map((msg: Message) => ({
+            role: msg.sender === "user" ? "user" : "model",
+            parts: [{ text: msg.content }],
+        })),
+        config: {
+            systemInstruction: "You are an AI expert on solar wind. Provide detailed and accurate information about solar wind and related topics. Use the information from the website as context.",
+        },
+    });
+
+    const response = await chat.sendMessage({
+        message,
+    });
+
+    return response.text || "";
+};
+
 export default function LearnMore() {
     const [selectedModel, setSelectedModel] = useState("");
+    const [input, setInput] = useState("");
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [loading, setLoading] = useState(false);
+    const chatContainerRef = useRef(null);
+
+    // State to manage API key and connection status
+    const [apiKey, setApiKey] = useState("AIzaSyDPdkXHtJitay5xjkF101yi-mMimqsgvCQ");
+    const [apiStatus, setApiStatus] = useState(true);
+
+    // Update the sendMessage function to use handleChat
+    const sendMessage = async () => {
+        if (!input.trim()) return;
+        const userMsg: Message = { sender: "user", content: input };
+        setMessages((prev) => [...prev, userMsg]);
+        setInput("");
+        setLoading(true);
+
+        try {
+            const aiResponse = await handleChat(input, messages);
+            setMessages((prev) => [...prev, { sender: "ai", content: aiResponse }]);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            console.error('Error contacting AI server:', errorMessage);
+            setMessages((prev) => [...prev, { sender: "ai", content: `⚠️ Error contacting AI server: ${errorMessage}` }]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Add type for the event parameter in handleKeyDown
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    };
+
+    // Function to check if the API is working
+    const checkApiStatus = async () => {
+        try {
+            const response = await ai.models.generateContent({
+                model: "gemini-2.0-flash",
+                contents: "Test",
+            });
+            setApiStatus(!!response.text);
+        } catch (err) {
+            setApiStatus(false);
+        }
+    };
+
+    // Use effect to check API status on component mount
+    useEffect(() => {
+        checkApiStatus();
+    }, [apiKey]);
+
+    // Function to handle API key submission
+    const handleApiKeySubmit = async () => {
+        await checkApiStatus();
+        if (!apiStatus) {
+            alert("The API key is invalid or the API is not responding. Please try again.");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-black to-yellow-600 text-white p-8">
             <header className="text-center py-12">
@@ -70,45 +164,63 @@ export default function LearnMore() {
                 </div>
             </section>
 
+            {!apiStatus && (
+                <div className="bg-red-500 text-white p-4 rounded mb-4">
+                    <p>The API is not responding. Please enter a valid API key:</p>
+                    <input
+                        type="text"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        className="mt-2 p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-500 focus:outline-none w-full"
+                    />
+                    <button
+                        onClick={handleApiKeySubmit}
+                        className="mt-2 bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded font-bold"
+                    >
+                        Submit
+                    </button>
+                </div>
+            )}
+
             <section className="mt-12 px-4 sm:px-12">
                 <h2 className="text-4xl font-bold text-yellow-400 text-center mb-8">
                     Chat with Our AI Solar Wind Expert
                 </h2>
 
                 <div className="max-w-3xl mx-auto bg-black/40 p-6 rounded-lg shadow-md">
-                    <div className="text-center mb-6">
-                        <label htmlFor="ai-model" className="block text-lg font-semibold text-yellow-300 mb-2">
-                            Choose an AI Persona
-                        </label>
-                        <select
-                            id="ai-model"
-                            value={selectedModel}
-                            onChange={(e) => setSelectedModel(e.target.value)}
-                            className="px-4 py-2 rounded text-black w-full max-w-xs"
-                        >
-                            <option value="">🧠 Select</option>
-                            <option value="openai">🤖 OpenAI – Scientific Expert</option>
-                            <option value="gemini">🔬 Gemini – Analytical Partner</option>
-                        </select>
-
-                        {selectedModel && (
-                            <button
-                                onClick={() => {
-                                    localStorage.removeItem(`chat_${selectedModel}`);
-                                    window.location.reload();
-                                }}
-                                className="mt-3 text-sm text-yellow-300 underline hover:text-yellow-100"
+                    <div ref={chatContainerRef} className="h-[400px] overflow-y-auto mb-4 space-y-4 pr-2">
+                        {messages.map((msg, i) => (
+                            <div
+                                key={i}
+                                className={`flex items-start space-x-3 ${msg.sender === "user" ? "justify-end text-right" : "justify-start"}`}
                             >
-                                Reset Chat for {selectedModel}
-                            </button>
+                                <div className="bg-white/10 p-3 rounded-lg max-w-[75%] text-sm">
+                                    <strong>{msg.sender === "user" ? "You" : "AI"}:</strong>
+                                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                </div>
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="bg-gray-700/50 p-3 rounded-lg text-sm text-yellow-300">Thinking...</div>
                         )}
                     </div>
 
-                    {selectedModel && (
-                        <div className="mt-4">
-                            <AIChat model={selectedModel}/>
-                        </div>
-                    )}
+                    <div className="flex items-center space-x-2">
+                        <textarea
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Ask about solar wind or our project..."
+                            className="flex-1 resize-none h-16 p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-500 focus:outline-none"
+                        />
+                        <button
+                            onClick={sendMessage}
+                            disabled={loading || !apiStatus}
+                            className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded font-bold"
+                        >
+                            {loading ? "..." : "Send"}
+                        </button>
+                    </div>
                 </div>
             </section>
 
