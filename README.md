@@ -89,7 +89,6 @@ frontend/
 │   ├── learn-more/              # Educational content
 │   ├── minigame/                # Game interface
 │   ├── components/              # Shared React components
-│   ├── models/                  # Python model logic (stub)
 │   └── pages/contact/           # Team contact page
 ├── public/                      # Static assets and team images
 ├── styles/                      # Global stylesheets
