@@ -36,7 +36,6 @@ const handleChat = async (message: string, messages: Message[]) => {
 };
 
 export default function LearnMore() {
-    const [selectedModel, setSelectedModel] = useState("");
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
@@ -84,6 +83,7 @@ export default function LearnMore() {
             setApiStatus(!!response.text);
         } catch (err) {
             setApiStatus(false);
+            console.log(err);
         }
     };
 
@@ -131,7 +131,7 @@ export default function LearnMore() {
                 <Link href="/learn-more/solar-wind-effects"
                       className="group block p-6 bg-yellow-500/10 rounded-xl shadow-lg transform transition duration-300 hover:scale-105 hover:bg-yellow-500/20">
                     <div className="text-center">
-                        <h3 className="text-2xl font-bold text-yellow-300 group-hover:text-yellow-400">Earth's
+                        <h3 className="text-2xl font-bold text-yellow-300 group-hover:text-yellow-400">Earth&#39;s
                             Impact</h3>
                         <p className="mt-2 text-sm opacity-75 group-hover:opacity-100">How does it affect our
                             planet?</p>
@@ -150,8 +150,8 @@ export default function LearnMore() {
 
             <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-12 mt-12">
                 <div className="p-6 bg-gray-800/50 rounded-xl shadow-lg">
-                    <h3 className="text-xl font-semibold text-yellow-400">The Sun's Magnetic Field</h3>
-                    <p className="mt-2 text-sm opacity-75">How the sun's magnetic forces shape the solar system.</p>
+                    <h3 className="text-xl font-semibold text-yellow-400">The Sun&#39;s Magnetic Field</h3>
+                    <p className="mt-2 text-sm opacity-75">How the sun&#39;s magnetic forces shape the solar system.</p>
                 </div>
                 <div className="p-6 bg-gray-800/50 rounded-xl shadow-lg">
                     <h3 className="text-xl font-semibold text-yellow-400">Geomagnetic Storms</h3>
@@ -226,7 +226,7 @@ export default function LearnMore() {
 
             <footer className="text-center mt-16">
                 <Link
-                    href="/frontend/public"
+                    href="/"
                     className="rounded-full px-6 py-3 bg-yellow-500 text-black font-bold hover:bg-yellow-400 transition"
                 >
                     Back to Home

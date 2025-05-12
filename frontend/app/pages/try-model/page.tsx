@@ -1,14 +1,6 @@
 import Link from 'next/link';
 
 export default function ModelPage() {
-    // const [input, setInput] = useState('');
-    // const [output, setOutput] = useState('');
-
-    // const handleSubmit = async () => {
-    //     const result = await callGradio(input);
-    //     setOutput(result);
-    // };
-
     return (
         <div className="flex min-h-screen bg-gradient-to-b from-indigo-900 via-black to-yellow-600 text-white">
             {/* LEFT PANEL */}
@@ -18,7 +10,7 @@ export default function ModelPage() {
                         Gradio App Loader
                     </h1>
                     <p className="text-yellow-200 mb-6 text-center">
-                        Python script will auto-start. Preview Gradio app below.
+                        Python script will auto-start.
                     </p>
                 </div>
                 <footer className="text-center p-4 border-t border-yellow-400">
@@ -45,18 +37,4 @@ export default function ModelPage() {
             </div>
         </div>
     );
-
-    // return (
-    //     <div className="p-6">
-    //         <input
-    //             value={input}
-    //             onChange={(e) => setInput(e.target.value)}
-    //             className="border p-2"
-    //         />
-    //         <button onClick={handleSubmit} className="ml-2 bg-blue-500 text-white px-4 py-2">
-    //             Run Model
-    //         </button>
-    //         <p className="mt-4">Output: {output}</p>
-    //     </div>
-    // );
 }

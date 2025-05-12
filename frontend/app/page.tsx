@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -71,17 +70,6 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="bg-black py-8 text-center text-sm">
-          <div className="flex justify-center gap-6 mb-4">
-            <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">
-              <Image src="/solar-icon.svg" alt="Solar Icon" width={24} height={24} />
-            </a>
-            <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">
-              <Image src="/ai-icon.svg" alt="AI Icon" width={24} height={24} />
-            </a>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <Image src="/github-icon.svg" alt="GitHub Icon" width={24} height={24} />
-            </a>
-          </div>
           <p>&copy; 2025 Solar Wind AI. All rights reserved.</p>
         </footer>
       </div>
